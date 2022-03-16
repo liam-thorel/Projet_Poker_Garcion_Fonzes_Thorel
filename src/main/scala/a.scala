@@ -29,7 +29,7 @@ enum Figure:
 
 
 class PlayingCard(val couleur : Couleur, val figure : Figure):
-  override def toString: String = "Couleur : " + couleur + " , Figure : " + figure;
+  override def toString: String = "Couleur : " + couleur + ", Figure : " + figure;
 ;
 
 class CouleurComparator extends scala.math.Ordering[PlayingCard]:
