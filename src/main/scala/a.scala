@@ -68,35 +68,55 @@ def isQuinteFlushRoyale(main : List[PlayingCard]): Boolean = main(0).figure.ordi
 
 def isQuinteFlush(main : List[PlayingCard]): Boolean = main(0).figure.ordinal == main(1).figure.ordinal+1 && main(1).figure.ordinal == main(2).figure.ordinal+1 && main(2).figure.ordinal == main(3).figure.ordinal+1 &&  main(3).figure.ordinal == main(4).figure.ordinal+1 && main(0).couleur.ordinal == main(1).couleur.ordinal && main(1).couleur.ordinal == main(2).couleur.ordinal  && main(2).couleur.ordinal == main(3).couleur.ordinal && main(3).couleur.ordinal == main(4).couleur.ordinal;
 
+def departageQuinteFlush(main : List[PlayingCard],main2 : List[PlayingCard]): Int = if main(0).figure.ordinal > main2(0).figure.ordinal then 1 else if main(0).figure.ordinal < main2(0).figure.ordinal then -1 else 0
+
 def isCarre(main : List[PlayingCard]):Boolean = main match {
   case moi :: suivant => if freq(main,main(0))==4 then true else isCarre(suivant);
   case Nil => false;
 }
 
+def departageCarre(main : List[PlayingCard], main2 : List[PlayingCard]): Int = if main(1).figure.ordinal > main2(1).figure.ordinal then 1 else if main(1).figure.ordinal < main2(1).figure.ordinal then -1 else 0
+
 def isFull //Je sais pas comment faire
+
+//def departageFull Nous n'avons pas trouvé comment faire
 
 def isCouleurFlush(main : List[PlayingCard]): Boolean = main(0).couleur.ordinal == main(1).couleur.ordinal && main(1).couleur.ordinal == main(2).couleur.ordinal  && main(2).couleur.ordinal == main(3).couleur.ordinal && main(3).couleur.ordinal == main(4).couleur.ordinal;
 
+def departageCouleurFlush(main : List[PlayingCard],main2 : List[PlayingCard]): Int = if main(0).figure.ordinal > main2(0).figure.ordinal then 1 else if main(0).figure.ordinal < main2(0).figure.ordinal then -1 else 0
+
 def isSuite(main : List[PlayingCard]): Boolean = main(0).figure.ordinal == main(1).figure.ordinal+1 && main(1).figure.ordinal == main(2).figure.ordinal+1 && main(2).figure.ordinal == main(3).figure.ordinal+1 &&  main(3).figure.ordinal == main(4).figure.ordinal+1
+
+def departageSuite(main : List[PlayingCard], main2 : List[PlayingCard]): Int = if main(0).figure.ordinal > main2(0).figure.ordinal then 1 else if main(0).figure.ordinal < main2(0).figure.ordinal then -1 else 0
 
 def isBrelan(main : List[PlayingCard]):Boolean = main match {
   case moi :: suivant => if freq(main,main(0))==3 then true else isBrelan(suivant);
   case Nil => false;
 }
 
+def departageBrelan(main : List[PlayingCard],main2 : List[PlayingCard]): Int = if main(2).figure.ordinal > main2(2).figure.ordinal then 1 else if main(2).figure.ordinal < main2(2).figure.ordinal then -1 else 0
+
 def isDoublePair(main : List[PlayingCard]):Boolean = main match { //Je sais pas comment faire
   case moi :: suivant =>
 }
+
+//def departageDoublePair Nous n'avons pas trouvé comment faire
 
 def isPair(main : List[PlayingCard]): Boolean = main match {
   case moi :: suivant => if freq(main,main(0))==2 then true else isPair(suivant);
   case Nil => false;
 }
 
+//def departagePair Nous n'avons pas trouvé comment faire
+
 def highestFigure(main : List[PlayingCard], nb : Int):Int = main match {
   case moi :: suivant => if main(0).figure.ordinal > nb then highestFigure(suivant,main(0).figure.ordinal) else highestFigure(suivant,nb)
   case Nil => nb;
 }
+
+def departageHFigure(main : List[PlayingCard],main2 : List[PlayingCard]): Int = if highestFigure(main,0) > highestFigure(main2,0) then 1 else if highestFigure(main,0) < highestFigure(main2,0) then -1 else 0
+
+//on va maintenant
 
 def combinaisonToValue(main : PokerHand):Int =
   if isQuinteFlushRoyale(main.figureComparator()) then 1
@@ -111,7 +131,20 @@ def combinaisonToValue(main : PokerHand):Int =
   else 10;
 
 
-
+object HandComparator extends scala.math.Ordering[PokerHand]:
+  override def compare(x: PokerHand, y: PokerHand): Int =
+    if combinaisonToValue(x) < combinaisonToValue(y) then 1
+    else if combinaisonToValue(x) > combinaisonToValue(y) then -1
+    else if combinaisonToValue(x) == 1 then 0
+    else if combinaisonToValue(x) == 2 then departageQuinteFlush(x.figureComparator(),y.figureComparator())
+    else if combinaisonToValue(x) == 3 then departageCarre(x.figureComparator(),y.figureComparator())
+    else if combinaisonToValue(x) == 4 then departageFull(x.figureComparator(),y.figureComparator())
+    else if combinaisonToValue(x) == 5 then departageCouleurFlush(x.figureComparator(),y.figureComparator())
+    else if combinaisonToValue(x) == 6 then departageSuite(x.figureComparator(),y.figureComparator())
+    else if combinaisonToValue(x) == 7 then departageBrelan(x.figureComparator(),y.figureComparator())
+    else if combinaisonToValue(x) == 8 then departageDoublePair(x.figureComparator(),y.figureComparator())
+    else if combinaisonToValue(x) == 9 then departagePair(x.figureComparator(),y.figureComparator())
+    else departageHFigure(x.figureComparator(),y.figureComparator());
 
 
 
