@@ -93,6 +93,25 @@ def isPair(main : List[PlayingCard]): Boolean = main match {
   case Nil => false;
 }
 
+def highestFigure(main : List[PlayingCard], nb : Int):Int = main match {
+  case moi :: suivant => if main(0).figure.ordinal > nb then highestFigure(suivant,main(0).figure.ordinal) else highestFigure(suivant,nb)
+  case Nil => nb;
+}
+
+def combinaisonToValue(main : PokerHand):Int =
+  if isQuinteFlushRoyale(main.figureComparator()) then 1
+  else if isQuinteFlush(main.figureComparator()) then 2
+  else if isCarre(main.figureComparator()) then 3
+  else if isFull(main.figureComparator()) then 4
+  else if isCouleurFlush(main.figureComparator()) then 5
+  else if isSuite(main.figureComparator()) then 6
+  else if isBrelan(main.figureComparator()) then 7
+  else if isDoublePair(main.figureComparator()) then 8
+  else if isPair(main.figureComparator()) then 9
+  else 10;
+
+
+
 
 
 
