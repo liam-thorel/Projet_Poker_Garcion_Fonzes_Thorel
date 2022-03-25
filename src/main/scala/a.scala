@@ -1,3 +1,5 @@
+import scala.util.Sorting
+
 enum Couleur:
   case P(c:String)
 
@@ -27,13 +29,89 @@ enum Figure:
     case 14 => Figure.P("As")
   }
 
-
 class PlayingCard(val couleur : Couleur, val figure : Figure):
-  override def toString: String = "Couleur : " + couleur + ", Figure : " + figure;
-;
+  override def toString: String = "Couleur : " + couleur + " , Figure : " + figure;
+  def memeFigure(x : PlayingCard) : Boolean = x.figure == this.figure;
 
-class CouleurComparator extends scala.math.Ordering[PlayingCard]:
+object CouleurComparator extends scala.math.Ordering[PlayingCard]:
   override def compare(x: PlayingCard, y: PlayingCard): Int = x.couleur.ordinal - y.couleur.ordinal;
 
-class FigureComparator extends scala.math.Ordering[PlayingCard]:
+object FigureComparator extends scala.math.Ordering[PlayingCard]:
   override def compare(x: PlayingCard, y: PlayingCard): Int = x.figure.ordinal - y.figure.ordinal;
+
+
+class PokerHand(list: List[PlayingCard]):
+   def couleurComparator(): List[PlayingCard] = this.list.sorted(ord = CouleurComparator)
+   def figureComparator(): List[PlayingCard] = this.list.sorted(ord = FigureComparator);
+
+def freq(liste : List[PlayingCard], card : PlayingCard): Int = liste match {
+  case moi :: suivant => if moi.memeFigure(card) then 1 + freq(suivant,card) else 0 + freq(suivant,card);
+  case Nil => 0;
+}
+
+
+
+//On va maintenant faire une fonction pour chaque type de main que l'on utilisera par la suite pour le comparateur de main
+
+//Quinte Flush Royale = 1
+//Quinte Flush = 2
+//Carré = 3
+//Full = 4
+//Couleur Flush = 5
+//Suite (Quinte) = 6
+//Brelan = 7
+//Double Pair = 8
+//Pair = 9
+//Carte isolé = 10
+
+def isQuinteFlushRoyale(main : List[PlayingCard]): Boolean = main(0).figure.ordinal == 14 && main(1).figure.ordinal == 13 && main(2).figure.ordinal == 12 && main(3).figure.ordinal == 11 && main(4).figure.ordinal == 10 && main(0).couleur.ordinal == main(1).couleur.ordinal && main(1).couleur.ordinal == main(2).couleur.ordinal  && main(2).couleur.ordinal == main(3).couleur.ordinal && main(3).couleur.ordinal == main(4).couleur.ordinal;
+
+def isQuinteFlush(main : List[PlayingCard]): Boolean = main(0).figure.ordinal == main(1).figure.ordinal+1 && main(1).figure.ordinal == main(2).figure.ordinal+1 && main(2).figure.ordinal == main(3).figure.ordinal+1 &&  main(3).figure.ordinal == main(4).figure.ordinal+1 && main(0).couleur.ordinal == main(1).couleur.ordinal && main(1).couleur.ordinal == main(2).couleur.ordinal  && main(2).couleur.ordinal == main(3).couleur.ordinal && main(3).couleur.ordinal == main(4).couleur.ordinal;
+
+def isCarre(main : List[PlayingCard]):Boolean = main match {
+  case moi :: suivant => if freq(main,main(0))==4 then true else isCarre(suivant);
+  case Nil => false;
+}
+
+def isFull //Je sais pas comment faire
+
+def isCouleurFlush(main : List[PlayingCard]): Boolean = main(0).couleur.ordinal == main(1).couleur.ordinal && main(1).couleur.ordinal == main(2).couleur.ordinal  && main(2).couleur.ordinal == main(3).couleur.ordinal && main(3).couleur.ordinal == main(4).couleur.ordinal;
+
+def isSuite(main : List[PlayingCard]): Boolean = main(0).figure.ordinal == main(1).figure.ordinal+1 && main(1).figure.ordinal == main(2).figure.ordinal+1 && main(2).figure.ordinal == main(3).figure.ordinal+1 &&  main(3).figure.ordinal == main(4).figure.ordinal+1
+
+def isBrelan(main : List[PlayingCard]):Boolean = main match {
+  case moi :: suivant => if freq(main,main(0))==3 then true else isBrelan(suivant);
+  case Nil => false;
+}
+
+def isDoublePair(main : List[PlayingCard]):Boolean = main match { //Je sais pas comment faire
+  case moi :: suivant =>
+}
+
+def isPair(main : List[PlayingCard]): Boolean = main match {
+  case moi :: suivant => if freq(main,main(0))==2 then true else isPair(suivant);
+  case Nil => false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@main def mainProjet =
+  val list = List(new PlayingCard(Couleur.P("Carreau"),Figure.P("3")),new PlayingCard(Couleur.P("Coeur"),Figure.P("3")));
+  val poker = new PokerHand(list);
+  println(isPair(list));
+
+
+
+
+
